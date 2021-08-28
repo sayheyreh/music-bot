@@ -114,4 +114,4 @@ async def on_ready():
     print('------')
 
 bot.add_cog(Music(bot))
-bot.run('ODgwNzI3ODkwMzQwMjQ5NjUw.YSifxA.BTDbY5A_rZhmonkQD1pblMaErLc')
+bot.run(key)
