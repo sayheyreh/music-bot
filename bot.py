@@ -59,6 +59,14 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.queue=[]
+        self.active=0
+    
+
+    def inc_queue_index(self,e):
+        if e:
+            print(f'Player error: {e}')
+        else:
+            self.active+=1
 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
@@ -75,10 +83,15 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-            print(player.title)
-            ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
+            self.queue.append(player.title)
+            for i in self.queue:
+                if (self.queue.index(player.title)==self.active):
+                    ctx.voice_client.play(player, after=lambda e:self.inc_queue_index(e))
+                else:
+                    pass
 
         await ctx.send(f'Now playing: {player.title}')
+        await ctx.send(f'Queue: {self.queue}')
 
     @commands.command()
     async def volume(self, ctx, volume: int):
