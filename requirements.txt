@@ -1,0 +1,6 @@
+discord
+requests
+PyNaCl
+python-dotenv
+youtube-dl
+ffmpeg
