@@ -58,6 +58,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
 class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.queue=[]
 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
@@ -74,6 +75,7 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+            print(player.title)
             ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
 
         await ctx.send(f'Now playing: {player.title}')
@@ -105,7 +107,7 @@ class Music(commands.Cog):
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 
-bot = commands.Bot(command_prefix=commands.when_mentioned_or("!"),
+bot = commands.Bot(command_prefix=commands.when_mentioned_or("oye "),
                    description='Relatively simple music bot example')
 
 @bot.event
@@ -114,4 +116,4 @@ async def on_ready():
     print('------')
 
 bot.add_cog(Music(bot))
-bot.run('ODgwNzI3ODkwMzQwMjQ5NjUw.YSifxA.BTDbY5A_rZhmonkQD1pblMaErLc')
+bot.run(key)
