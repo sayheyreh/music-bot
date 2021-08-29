@@ -1,3 +1,4 @@
+from time import time
 import youtube_dl
 from discord.ext import commands
 import discord
@@ -60,6 +61,7 @@ class Music(commands.Cog):
         self.bot = bot
         self.queue=[]
         self.active=0
+        self.is_playing=False
     
 
     def inc_queue_index(self,e):
@@ -67,6 +69,7 @@ class Music(commands.Cog):
             print(f'Player error: {e}')
         else:
             self.active+=1
+            print(self.is_playing,'in test')    
 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
@@ -83,13 +86,12 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-            self.queue.append(player.title)
-            for i in self.queue:
-                if (self.queue.index(player.title)==self.active):
-                    ctx.voice_client.play(player, after=lambda e:self.inc_queue_index(e))
-                else:
-                    pass
-
+            self.queue.append(player)
+            print(self.is_playing,"checking if it skips")
+            if (self.is_playing==False) and (self.queue.index(player))==self.active:
+                ctx.voice_client.play(self.queue[self.active], after=lambda e:self.inc_queue_index(e))
+                self.is_playing=True
+    
         await ctx.send(f'Now playing: {player.title}')
         await ctx.send(f'Queue: {self.queue}')
 
@@ -120,7 +122,7 @@ class Music(commands.Cog):
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 
-bot = commands.Bot(command_prefix=commands.when_mentioned_or("oye "),
+bot = commands.Bot(command_prefix=commands.when_mentioned_or(";"),
                    description='Relatively simple music bot example')
 
 @bot.event
